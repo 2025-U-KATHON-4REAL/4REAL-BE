@@ -1,6 +1,6 @@
 package com.team4real.demo.global.security;
 
-import com.team4real.demo.domain.user.service.UserService;
+import com.team4real.demo.domain.auth.service.AuthService;
 import com.team4real.demo.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
     private final JwtProvider jwtProvider;
-    private final UserService userService;
+    private final AuthService authService;
     private final CookieUtil cookieUtil;
 
     @Override
@@ -29,7 +29,7 @@ public class CustomLogoutHandler implements LogoutHandler {
                 jwtProvider.validateAccessToken(accessToken);
 
                 // Redis에서 refreshToken 삭제
-                userService.deleteRefreshToken(authentication.getName());
+                authService.deleteRefreshToken(authentication.getName());
             }
             // 쿠키 삭제
             cookieUtil.deleteCookie(response, "refreshToken");
