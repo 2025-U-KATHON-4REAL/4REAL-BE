@@ -50,12 +50,10 @@ dependencies {
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.119.Final:osx-aarch_64'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    // spring ai
+    // Spring AI
     implementation 'org.springframework.ai:spring-ai-openai:1.0.0-M6'
-    // s3
-    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
-    implementation 'commons-io:commons-io:2.14.0'
-    implementation 'commons-fileupload:commons-fileupload:1.5'
+    // Amazon S3
+    implementation("software.amazon.awssdk:s3:2.20.100")
 }
 
 dependencyManagement {
