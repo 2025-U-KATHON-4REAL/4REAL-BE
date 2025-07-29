@@ -12,7 +12,7 @@ public record UserResponseDto(
         String phoneNumber,
         UserType userType,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime modifiedAt
 ) {
     public static UserResponseDto from(User user) {
         return new UserResponseDto(
@@ -22,7 +22,7 @@ public record UserResponseDto(
                 user.getPhoneNumber(),
                 user.getUserType(),
                 user.getCreatedAt(),
-                user.getUpdatedAt()
+                user.getModifiedAt()
         );
     }
 } 

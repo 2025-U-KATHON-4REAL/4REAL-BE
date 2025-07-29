@@ -1,9 +1,9 @@
 package com.team4real.demo.global.security;
 
 import com.team4real.demo.domain.user.entity.Role;
-import com.team4real.demo.domain.user.repository.UserRepository;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
+import com.team4real.demo.global.redis.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -21,18 +21,19 @@ import java.util.Date;
 public class JwtProvider {
     private final Key accessKey;
     private final Key refreshKey;
-    private final UserRepository userRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private static final Duration ACCESS_TOKEN_EXPIRE_TIME = Duration.ofHours(6);
     private static final Duration REFRESH_TOKEN_EXPIRE_TIME = Duration.ofDays(7);
+    private final RedisService redisService;
 
     public JwtProvider(@Value("${jwt.secret.access}") String accessSecret,
                        @Value("${jwt.secret.refresh}") String refreshSecret,
-                       UserRepository userRepository, CustomUserDetailsService customUserDetailsService) {
+                       CustomUserDetailsService customUserDetailsService,
+                       RedisService redisService) {
         this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
         this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
-        this.userRepository = userRepository;
         this.customUserDetailsService = customUserDetailsService;
+        this.redisService = redisService;
     }
 
     public String generateAccessToken(String username) {
@@ -40,12 +41,7 @@ public class JwtProvider {
     }
 
     public String generateRefreshToken(String username) {
-        String refreshToken = generateToken(username, refreshKey, REFRESH_TOKEN_EXPIRE_TIME);
-        userRepository.findByEmail(username).ifPresent(user -> {
-            user.setRefreshToken(refreshToken);
-            userRepository.save(user);
-        });
-        return refreshToken;
+        return generateToken(username, refreshKey, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private String generateToken(String username, Key key, Duration expiredTime) {
@@ -99,5 +95,24 @@ public class JwtProvider {
 
     public Claims getRefreshTokenClaims(String refreshToken) {
         return parseClaims(refreshToken, refreshKey);
+    }
+
+
+    // Redis에 refreshToken 저장 (7일 TTL 설정)
+    public void updateRefreshToken(String username, String refreshToken) {
+        String redisKey = "auth:refresh_token:" + username;
+        redisService.set(redisKey, refreshToken, Duration.ofDays(7));
+    }
+
+    // Redis에서 refreshToken 조회
+    public String getRefreshToken(String username) {
+        String redisKey = "auth:refresh_token:" + username;
+        return redisService.get(redisKey, String.class);
+    }
+
+    // Redis에서 refreshToken 삭제
+    public void deleteRefreshToken(String username) {
+        String redisKey = "auth:refresh_token:" + username;
+        redisService.delete(redisKey);
     }
 }

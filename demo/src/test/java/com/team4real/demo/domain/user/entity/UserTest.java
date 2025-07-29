@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("User 엔티티 테스트")
 class UserTest {
@@ -100,6 +99,6 @@ class UserTest {
         assertThat(user).isInstanceOf(User.class);
         // BaseTimeEntity의 메서드들이 접근 가능한지 확인
         assertThat(user.getCreatedAt()).isNull(); // 저장 전에는 null
-        assertThat(user.getUpdatedAt()).isNull(); // 저장 전에는 null
+        assertThat(user.getModifiedAt()).isNull(); // 저장 전에는 null
     }
 } 

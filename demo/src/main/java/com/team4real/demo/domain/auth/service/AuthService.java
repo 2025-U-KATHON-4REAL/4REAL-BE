@@ -24,7 +24,6 @@ public class AuthService {
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RedisService redisService;
 
     @Transactional(readOnly = true)
     public void validateEmailAvailability(String email) {
@@ -61,7 +60,7 @@ public class AuthService {
         User user = userService.getUserByEmail(userEmail);
 
         // Redis에서 저장된 refreshToken 조회
-        String storedRefreshToken = getRefreshToken(userEmail);
+        String storedRefreshToken = jwtProvider.getRefreshToken(userEmail);
         
         if (user == null || storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
@@ -75,26 +74,8 @@ public class AuthService {
         String accessToken = jwtProvider.generateAccessToken(user.getEmail());
         String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
 
-        updateRefreshToken(user.getEmail(), refreshToken);
+        jwtProvider.updateRefreshToken(user.getEmail(), refreshToken);
         return new TokenResponseDto(accessToken, refreshToken);
-    }
-
-    // Redis에 refreshToken 저장 (7일 TTL 설정)
-    public void updateRefreshToken(String username, String refreshToken) {
-        String redisKey = "refresh_token:" + username;
-        redisService.set(redisKey, refreshToken, Duration.ofDays(7));
-    }
-
-    // Redis에서 refreshToken 조회
-    public String getRefreshToken(String username) {
-        String redisKey = "refresh_token:" + username;
-        return redisService.get(redisKey, String.class);
-    }
-
-    // Redis에서 refreshToken 삭제
-    public void deleteRefreshToken(String username) {
-        String redisKey = "refresh_token:" + username;
-        redisService.delete(redisKey);
     }
 
     private String encodePassword(String password) {
