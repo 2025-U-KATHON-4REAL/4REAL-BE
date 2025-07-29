@@ -3,7 +3,6 @@ package com.team4real.demo.domain.auth.controller;
 import com.team4real.demo.domain.auth.dto.*;
 import com.team4real.demo.domain.auth.service.AuthService;
 import com.team4real.demo.domain.auth.service.AuthUserService;
-import com.team4real.demo.domain.auth.entity.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -24,16 +24,16 @@ public class Creator extends BaseTimeEntity {
 
     private String image;
     private String realName;
-    private Integer age;
+    private String birth;
     private String gender;
 
     @Builder
-    public Creator(AuthUser authUser, String name, String image, String realName, Integer age, String gender) {
+    public Creator(AuthUser authUser, String name, String image, String realName, String birth, String gender) {
         this.authUser = authUser;
         this.name = name;
         this.image = image;
         this.realName = realName;
-        this.age = age;
+        this.birth = birth;
         this.gender = gender;
     }
 }
