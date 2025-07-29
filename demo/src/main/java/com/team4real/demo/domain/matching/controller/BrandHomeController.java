@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Home-Brand")
+@Tag(name = "Matching-Brand")
 @RestController
 @PreAuthorize("hasRole('BRAND')")
 @RequestMapping("/brands/matchings")

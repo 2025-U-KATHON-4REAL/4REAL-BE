@@ -10,12 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Home-Creator")
+@Tag(name = "Matching-Creator")
 @RestController
 @PreAuthorize("hasRole('CREATOR')")
 @RequestMapping("/creators/matchings")
@@ -44,4 +41,17 @@ public class CreatorHomeController {
         PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.PENDING, sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
     }
+
+    @PatchMapping("/{matchingId}/accept")
+    public ResponseEntity<Void> accept(@PathVariable Long matchingId) {
+        matchingService.acceptMatching(matchingId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{matchingId}/reject")
+    public ResponseEntity<Void> reject(@PathVariable Long matchingId) {
+        matchingService.rejectMatching(matchingId);
+        return ResponseEntity.ok().build();
+    }
+
 }

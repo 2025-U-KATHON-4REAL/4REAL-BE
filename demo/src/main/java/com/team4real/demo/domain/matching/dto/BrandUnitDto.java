@@ -13,6 +13,7 @@ public record BrandUnitDto(
         String image,
         int matchScore,
         String keywords,
+        String description,
         MatchingStatus status,
         boolean liked
 ) {
@@ -24,6 +25,7 @@ public record BrandUnitDto(
                 .image(brand.getImage())
                 .matchScore(m.getMatchScore())
                 .keywords(brand.getKeyword())
+                .description(brand.getDescription())
                 .status(m.getStatus())
                 .liked(liked)
                 .build();

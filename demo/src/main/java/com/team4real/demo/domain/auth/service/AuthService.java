@@ -39,9 +39,9 @@ public class AuthService {
                 requestDto.role(),
                 normalizedPhoneNumber
         );
-        if (requestDto.role() == Role.CREATOR) {
+        if (newAuthUser.isCreator()) {
             authUserService.createCreator(newAuthUser, requestDto.name());
-        } else if (requestDto.role() == Role.BRAND) {
+        } else if (newAuthUser.isBrand()) {
             authUserService.createBrand(newAuthUser, requestDto.name());
         }
         return generateTokenResponse(newAuthUser);

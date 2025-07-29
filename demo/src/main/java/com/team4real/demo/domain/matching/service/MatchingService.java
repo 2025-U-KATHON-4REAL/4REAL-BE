@@ -1,5 +1,6 @@
 package com.team4real.demo.domain.matching.service;
 
+import com.team4real.demo.domain.auth.entity.AuthUser;
 import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.brand.entity.Brand;
 import com.team4real.demo.domain.brand.repository.BrandLikeRepository;
@@ -11,6 +12,8 @@ import com.team4real.demo.domain.matching.entity.MatchingSortStrategy;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
 import com.team4real.demo.domain.matching.repository.MatchingRepository;
 import com.team4real.demo.global.common.dto.PageResult;
+import com.team4real.demo.global.exception.CustomException;
+import com.team4real.demo.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -70,5 +73,34 @@ public class MatchingService {
         Long nextKey = hasNext ? matchings.getLast().getMatchingId() : null;
         List<D> items = matchings.stream().map(mappingFunction).toList();
         return new PageResult<>(items, nextKey);
+    }
+
+    @Transactional
+    public void acceptMatching(Long matchingId) {
+        Matching matching = matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        validateMatchingOwnership(matching); // 본인 확인 로직
+        matching.accept();
+    }
+
+    @Transactional
+    public void rejectMatching(Long matchingId) {
+        Matching matching = matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        validateMatchingOwnership(matching);
+        matching.reject();
+    }
+
+    public void validateMatchingOwnership(Matching matching) {
+        AuthUser user = authUserService.getCurrentAuthUser();
+        boolean isOwner = false;
+        if (user.isCreator()) {
+            isOwner = matching.getCreator().getAuthUser().equals(user);
+        } else if (user.isBrand()) {
+            isOwner = matching.getBrand().getAuthUser().equals(user);
+        }
+        if (!isOwner) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_REQUEST);
+        }
     }
 }

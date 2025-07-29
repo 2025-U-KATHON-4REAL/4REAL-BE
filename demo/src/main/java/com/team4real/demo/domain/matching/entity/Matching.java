@@ -53,4 +53,25 @@ public class Matching extends BaseTimeEntity {
     public void updateRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
+
+    public void pend() {
+        if (this.status != MatchingStatus.PENDING) {
+            throw new IllegalStateException("요청 상태에서만 보류로 변경할 수 있습니다.");
+        }
+        this.status = MatchingStatus.PENDING;
+    }
+
+    public void accept() {
+        if (this.status != MatchingStatus.PENDING) {
+            throw new IllegalStateException("요청 상태에서만 수락할 수 있습니다.");
+        }
+        this.status = MatchingStatus.ACCEPTED;
+    }
+
+    public void reject() {
+        if (this.status != MatchingStatus.PENDING) {
+            throw new IllegalStateException("요청 상태에서만 거절할 수 있습니다.");
+        }
+        this.status = MatchingStatus.REJECTED;
+    }
 }

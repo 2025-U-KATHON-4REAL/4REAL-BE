@@ -32,4 +32,11 @@ public class AuthUser extends BaseTimeEntity {
         this.role = role;
         this.phoneNumber = phoneNumber;
     }
+    public boolean isCreator() {
+        return this.role == Role.CREATOR;
+    }
+
+    public boolean isBrand() {
+        return this.role == Role.BRAND;
+    }
 }
