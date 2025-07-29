@@ -95,6 +95,6 @@ class UserResponseDtoTest {
         assertThat(responseDto).isInstanceOf(UserResponseDto.class);
         assertThat(responseDto.userId()).isNull(); // 저장 전에는 null
         assertThat(responseDto.createdAt()).isNull(); // 저장 전에는 null
-        assertThat(responseDto.updatedAt()).isNull(); // 저장 전에는 null
+        assertThat(responseDto.modifiedAt()).isNull(); // 저장 전에는 null
     }
 } 
