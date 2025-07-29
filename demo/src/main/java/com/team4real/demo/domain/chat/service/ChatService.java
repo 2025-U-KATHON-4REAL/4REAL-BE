@@ -3,7 +3,7 @@ package com.team4real.demo.domain.chat.service;
 import com.team4real.demo.domain.auth.entity.AuthUser;
 import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.chat.dto.ChatMessageDto;
-import com.team4real.demo.domain.chat.dto.ChatMessageSendRequestDto;
+import com.team4real.demo.domain.chat.dto.ChatMessageContentDto;
 import com.team4real.demo.domain.chat.entity.ChatMessage;
 import com.team4real.demo.domain.chat.entity.ChatRoom;
 import com.team4real.demo.domain.chat.entity.MessageType;
@@ -29,8 +29,8 @@ public class ChatService {
     private final MatchingRepository matchingRepository;
     private final AuthUserService authUserService;
 
-    public void sendUserMessage(ChatMessageSendRequestDto requestDto) {
-        sendMessage(new ChatMessageDto(requestDto.matchingId(), requestDto.content(), MessageType.USER));
+    public void sendUserMessage(Long chatRoomId, ChatMessageContentDto requestDto) {
+        sendMessage(new ChatMessageDto(chatRoomId, requestDto.content(), MessageType.USER));
     }
 
     private void sendMessage(ChatMessageDto requestDto) {
