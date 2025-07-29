@@ -4,6 +4,8 @@ import com.team4real.demo.domain.auth.entity.AuthUser;
 import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.brand.entity.Brand;
 import com.team4real.demo.domain.brand.repository.BrandLikeRepository;
+import com.team4real.demo.domain.chat.entity.ChatRoom;
+import com.team4real.demo.domain.chat.repository.ChatRoomRepository;
 import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.matching.dto.BrandUnitDto;
 import com.team4real.demo.domain.matching.dto.CreatorUnitDto;
@@ -31,6 +33,7 @@ public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final AuthUserService authUserService;
     private final BrandLikeRepository brandLikeRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     // 크리에이터 회원을 위한
     @Transactional(readOnly = true)
@@ -83,8 +86,11 @@ public class MatchingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         validateReceiver(authUser, matching);
         matching.pend(matchingDataDto.content());
+        chatRoomRepository.findByMatching_MatchingId(matchingId)
+                .orElseGet(() -> chatRoomRepository.save(new ChatRoom(matching)));
     }
 
+    // 매칭 수락 & 채팅방 생성
     @Transactional
     public void acceptMatching(Long matchingId, MatchingDataDto matchingDataDto) {
         AuthUser authUser = authUserService.getCurrentAuthUser();
