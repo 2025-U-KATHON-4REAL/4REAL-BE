@@ -1,5 +1,6 @@
 package com.team4real.demo.domain.user.service;
 
+import com.team4real.demo.domain.user.entity.Role;
 import com.team4real.demo.domain.user.entity.User;
 import com.team4real.demo.domain.user.entity.UserType;
 import com.team4real.demo.domain.user.repository.UserRepository;
@@ -37,12 +38,14 @@ public class UserService {
     }
 
     public User createUser(String email, String encryptedPassword, String nickname, String phoneNumber, UserType userType) {
+        Role role = userType == UserType.ADMIN ? Role.ROLE_ADMIN : Role.ROLE_USER;
         User user = User.builder()
                 .email(email)
                 .encryptedPassword(encryptedPassword)
                 .nickname(nickname)
                 .phoneNumber(phoneNumber)
                 .userType(userType)
+                .role(role)
                 .build();
         return userRepository.save(user);
     }
