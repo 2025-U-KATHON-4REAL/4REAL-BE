@@ -56,6 +56,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
+                "https://localhost:3000",
                 "http://localhost:3001",
                 "http://localhost:5173",
                 "http://localhost:5174",
@@ -93,6 +94,8 @@ public class SecurityConfig {
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, cookieUtil), LogoutFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error", "/favicon.ico",
+                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs", "/v3/api-docs/**", "/webjars/**").permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().permitAll())
                 .logout(logout -> logout
