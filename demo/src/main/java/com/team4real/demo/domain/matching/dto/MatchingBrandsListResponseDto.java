@@ -13,9 +13,10 @@ public record MatchingBrandsListResponseDto(
         String image,
         int matchScore,
         String keywords,
-        MatchingStatus status
+        MatchingStatus status,
+        boolean liked
 ) {
-    public static MatchingBrandsListResponseDto from(Matching m, Brand brand) {
+    public static MatchingBrandsListResponseDto from(Matching m, Brand brand, boolean liked) {
         return MatchingBrandsListResponseDto.builder()
                 .matchingId(m.getMatchingId())
                 .brandId(brand.getBrandId())
@@ -24,6 +25,7 @@ public record MatchingBrandsListResponseDto(
                 .matchScore(m.getMatchScore())
                 .keywords(brand.getKeyword())
                 .status(m.getStatus())
+                .liked(liked)
                 .build();
     }
 }

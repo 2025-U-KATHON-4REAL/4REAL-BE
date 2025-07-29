@@ -26,6 +26,9 @@ public class Brand extends BaseTimeEntity {
     private String keyword;
     private String description;
 
+    @Column(nullable = false)
+    private int likeCount = 0;
+
     @Builder
     public Brand(AuthUser authUser, String name, String image, String keyword, String description) {
         this.authUser = authUser;

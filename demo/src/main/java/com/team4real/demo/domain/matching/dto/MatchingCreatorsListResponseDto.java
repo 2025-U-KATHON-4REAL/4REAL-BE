@@ -12,9 +12,10 @@ public record MatchingCreatorsListResponseDto(
         String name,
         String image,
         int matchScore,
-        MatchingStatus status
+        MatchingStatus status,
+        boolean liked
 ) {
-    public static MatchingCreatorsListResponseDto from(Matching m, Creator creator) {
+    public static MatchingCreatorsListResponseDto from(Matching m, Creator creator, boolean liked) {
         return MatchingCreatorsListResponseDto.builder()
                 .matchingId(m.getMatchingId())
                 .creatorId(creator.getCreatorId())
@@ -22,6 +23,7 @@ public record MatchingCreatorsListResponseDto(
                 .image(creator.getImage())
                 .matchScore(m.getMatchScore())
                 .status(m.getStatus())
+                .liked(liked)
                 .build();
     }
 }
