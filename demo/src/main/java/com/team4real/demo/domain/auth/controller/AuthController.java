@@ -1,9 +1,6 @@
 package com.team4real.demo.domain.auth.controller;
 
-import com.team4real.demo.domain.auth.dto.AuthLoginRequestDto;
-import com.team4real.demo.domain.auth.dto.AuthMeResponseDto;
-import com.team4real.demo.domain.auth.dto.AuthSignUpRequestDto;
-import com.team4real.demo.domain.auth.dto.TokenResponseDto;
+import com.team4real.demo.domain.auth.dto.*;
 import com.team4real.demo.domain.auth.service.AuthService;
 import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.auth.entity.AuthUser;
@@ -50,8 +47,13 @@ public class AuthController {
 
     @Operation(summary = "내 정보 확인")
     @GetMapping("/me")
-    public ResponseEntity<AuthMeResponseDto> getCurrentUserInfo() {
-        AuthUser authUser = authUserService.getCurrentAuthUser();
-        return ResponseEntity.ok(AuthMeResponseDto.from(authUser));
+    public ResponseEntity<AuthMeResponseDto> getCurrentMe() {
+        return ResponseEntity.ok(authUserService.getCurrentMe());
+    }
+
+    @Operation(summary = "내 프로필 확인")
+    @GetMapping("/profile")
+    public ResponseEntity<AuthProfileResponseDto> getCurrentProfile() {
+        return ResponseEntity.ok(authUserService.getCurrentProfile());
     }
 }

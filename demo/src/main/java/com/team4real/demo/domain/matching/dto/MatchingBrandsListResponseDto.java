@@ -18,7 +18,7 @@ public record MatchingBrandsListResponseDto(
     public static MatchingBrandsListResponseDto from(Matching m, Brand brand) {
         return MatchingBrandsListResponseDto.builder()
                 .matchingId(m.getMatchingId())
-                .brandId(brand.getId())
+                .brandId(brand.getBrandId())
                 .name(brand.getName())
                 .image(brand.getImage())
                 .matchScore(m.getMatchScore())

@@ -16,10 +16,4 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreatorService {
     private final CreatorRepository creatorRepository;
-
-    @Transactional(readOnly = true)
-    public Creator getCreatorByAuthUser(AuthUser authUser) {
-        return creatorRepository.findByAuthUser(authUser)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-    }
 }

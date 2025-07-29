@@ -1,5 +1,7 @@
 package com.team4real.demo.domain.auth.service;
 
+import com.team4real.demo.domain.auth.dto.AuthMeResponseDto;
+import com.team4real.demo.domain.auth.dto.AuthProfileResponseDto;
 import com.team4real.demo.domain.brand.entity.Brand;
 import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.auth.entity.AuthUser;
@@ -79,5 +81,37 @@ public class AuthUserService {
         AuthUser authUser = getCurrentAuthUser();
         return creatorRepository.findByAuthUser(authUser)
                 .orElseThrow(() -> new IllegalStateException("Creator가 아닙니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public AuthMeResponseDto getCurrentMe() {
+        AuthUser authUser = getCurrentAuthUser();
+        Long refId = switch (authUser.getRole()) {
+            case CREATOR -> creatorRepository.findByAuthUser(authUser)
+                    .map(Creator::getCreatorId)
+                    .orElseThrow(() -> new IllegalStateException("Creator가 아닙니다."));
+            case BRAND -> brandRepository.findByAuthUser(authUser)
+                    .map(Brand::getBrandId)
+                    .orElseThrow(() -> new IllegalStateException("Brand가 아닙니다."));
+            default -> null;
+        };
+        return AuthMeResponseDto.from(authUser, refId);
+    }
+
+    private record ProfileInfo(String name, String image) {}
+
+    @Transactional(readOnly = true)
+    public AuthProfileResponseDto getCurrentProfile() {
+        AuthUser authUser = getCurrentAuthUser();
+        ProfileInfo profileInfo = switch (authUser.getRole()) {
+            case CREATOR -> creatorRepository.findByAuthUser(authUser)
+                    .map(c -> new ProfileInfo(c.getName(), c.getImage()))
+                    .orElseThrow(() -> new IllegalStateException("Creator가 아닙니다."));
+            case BRAND -> brandRepository.findByAuthUser(authUser)
+                    .map(b -> new ProfileInfo(b.getName(), b.getImage()))
+                    .orElseThrow(() -> new IllegalStateException("Brand가 아닙니다."));
+            default -> new ProfileInfo("ADMIN", null);
+        };
+        return AuthProfileResponseDto.from(profileInfo.name(), profileInfo.image(), authUser.getEmail());
     }
 }

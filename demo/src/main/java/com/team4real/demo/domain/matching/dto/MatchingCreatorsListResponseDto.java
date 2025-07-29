@@ -1,6 +1,5 @@
 package com.team4real.demo.domain.matching.dto;
 
-import com.team4real.demo.domain.brand.entity.Brand;
 import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.matching.entity.Matching;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
@@ -18,7 +17,7 @@ public record MatchingCreatorsListResponseDto(
     public static MatchingCreatorsListResponseDto from(Matching m, Creator creator) {
         return MatchingCreatorsListResponseDto.builder()
                 .matchingId(m.getMatchingId())
-                .creatorId(creator.getId())
+                .creatorId(creator.getCreatorId())
                 .name(creator.getName())
                 .image(creator.getImage())
                 .matchScore(m.getMatchScore())

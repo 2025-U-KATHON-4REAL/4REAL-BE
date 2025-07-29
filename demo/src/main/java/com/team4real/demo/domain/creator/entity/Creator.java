@@ -13,7 +13,7 @@ public class Creator extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private Long id;
+    private Long creatorId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_user_id", nullable = false, unique = true)

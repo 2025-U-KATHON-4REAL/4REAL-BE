@@ -36,12 +36,12 @@ public class AuthService {
         AuthUser newAuthUser = authUserService.createAuthUser(
                 requestDto.email(),
                 encodePassword(requestDto.password()),
-                requestDto.userType(),
+                requestDto.role(),
                 normalizedPhoneNumber
         );
-        if (requestDto.userType() == Role.CREATOR) {
+        if (requestDto.role() == Role.CREATOR) {
             authUserService.createCreator(newAuthUser, requestDto.nickname());
-        } else if (requestDto.userType() == Role.BRAND) {
+        } else if (requestDto.role() == Role.BRAND) {
             authUserService.createBrand(newAuthUser, requestDto.nickname());
         }
         return generateTokenResponse(newAuthUser);
