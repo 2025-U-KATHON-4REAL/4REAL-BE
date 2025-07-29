@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @Transactional
 @RequiredArgsConstructor
 public class ChatService {
-
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MatchingRepository matchingRepository;
