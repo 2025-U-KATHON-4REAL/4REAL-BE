@@ -1,9 +1,12 @@
 package com.team4real.demo.domain.auth.controller;
 
 import com.team4real.demo.domain.auth.dto.AuthLoginRequestDto;
+import com.team4real.demo.domain.auth.dto.AuthMeResponseDto;
 import com.team4real.demo.domain.auth.dto.AuthSignUpRequestDto;
 import com.team4real.demo.domain.auth.dto.TokenResponseDto;
 import com.team4real.demo.domain.auth.service.AuthService;
+import com.team4real.demo.domain.auth.service.AuthUserService;
+import com.team4real.demo.domain.auth.entity.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final AuthUserService authUserService;
 
     @Operation(summary = "이메일 중복 확인")
     @GetMapping("/check-email")
@@ -42,5 +46,12 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponseDto> refreshAccessToken(@RequestParam @NotNull String refreshToken) {
         return ResponseEntity.ok(authService.refreshAccessToken(refreshToken));
+    }
+
+    @Operation(summary = "내 정보 확인")
+    @GetMapping("/me")
+    public ResponseEntity<AuthMeResponseDto> getCurrentUserInfo() {
+        AuthUser authUser = authUserService.getCurrentAuthUser();
+        return ResponseEntity.ok(AuthMeResponseDto.from(authUser));
     }
 }
