@@ -1,6 +1,6 @@
 package com.team4real.demo.global.security;
 
-import com.team4real.demo.domain.user.entity.Role;
+import com.team4real.demo.domain.auth.entity.Role;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
 import com.team4real.demo.global.redis.RedisService;
@@ -46,7 +46,7 @@ public class JwtProvider {
 
     private String generateToken(String username, Key key, Duration expiredTime) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("role", Role.ROLE_USER.name());
+        claims.put("role", Role.CREATOR.toAuthority());
 
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + expiredTime.toMillis());

@@ -3,11 +3,10 @@ package com.team4real.demo.domain.auth.service;
 import com.team4real.demo.domain.auth.dto.AuthLoginRequestDto;
 import com.team4real.demo.domain.auth.dto.AuthSignUpRequestDto;
 import com.team4real.demo.domain.auth.dto.TokenResponseDto;
-import com.team4real.demo.domain.user.entity.User;
-import com.team4real.demo.domain.user.service.UserService;
+import com.team4real.demo.domain.auth.entity.AuthUser;
+import com.team4real.demo.domain.auth.entity.Role;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
-import com.team4real.demo.global.redis.RedisService;
 import com.team4real.demo.global.security.JwtProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -19,36 +18,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserService userService;
+    private final AuthUserService authUserService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public void validateEmailAvailability(String email) {
-        if (userService.existsByEmail(email)) {
+        if (authUserService.existsByEmail(email)) {
             throw new CustomException(ErrorCode.RESOURCE_ALREADY_EXISTS);
         }
     }
 
+    // 회원 가입
     public TokenResponseDto signUp(AuthSignUpRequestDto requestDto) {
         validateEmailAvailability(requestDto.email());
         String normalizedPhoneNumber = requestDto.phoneNumber().replaceAll("-", "");
-        User newUser = userService.createUser(
+        AuthUser newAuthUser = authUserService.createAuthUser(
                 requestDto.email(),
                 encodePassword(requestDto.password()),
-                requestDto.nickname(),
-                normalizedPhoneNumber,
-                requestDto.userType()
+                requestDto.role(),
+                normalizedPhoneNumber
         );
-        return generateTokenResponse(newUser);
+        if (requestDto.role() == Role.CREATOR) {
+            authUserService.createCreator(newAuthUser, requestDto.nickname());
+        } else if (requestDto.role() == Role.BRAND) {
+            authUserService.createBrand(newAuthUser, requestDto.nickname());
+        }
+        return generateTokenResponse(newAuthUser);
     }
 
+    // 로그인
     public TokenResponseDto login(AuthLoginRequestDto requestDto) {
-        User user = userService.getUserByEmail(requestDto.email());
-        if (!passwordEncoder.matches(requestDto.password(), user.getEncryptedPassword())) {
+        AuthUser authUser = authUserService.getAuthUserByEmail(requestDto.email());
+        if (!passwordEncoder.matches(requestDto.password(), authUser.getPasswordHash())) {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
-        return generateTokenResponse(user);
+        return generateTokenResponse(authUser);
     }
 
     public TokenResponseDto refreshAccessToken(String refreshToken) {
@@ -56,24 +61,22 @@ public class AuthService {
 
         Claims claims = jwtProvider.getRefreshTokenClaims(refreshToken);
         String userEmail = claims.getSubject();
-        User user = userService.getUserByEmail(userEmail);
+        AuthUser authUser = authUserService.getAuthUserByEmail(userEmail);
 
-        // Redis에서 저장된 refreshToken 조회
         String storedRefreshToken = jwtProvider.getRefreshToken(userEmail);
-        
-        if (user == null || storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+
+        if (authUser == null || storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
-
-        String newAccessToken = jwtProvider.generateAccessToken(user.getEmail());
+        String newAccessToken = jwtProvider.generateAccessToken(authUser.getEmail());
         return new TokenResponseDto(newAccessToken, refreshToken);
     }
 
-    private TokenResponseDto generateTokenResponse(User user) {
-        String accessToken = jwtProvider.generateAccessToken(user.getEmail());
-        String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
+    private TokenResponseDto generateTokenResponse(AuthUser authUser) {
+        String accessToken = jwtProvider.generateAccessToken(authUser.getEmail());
+        String refreshToken = jwtProvider.generateRefreshToken(authUser.getEmail());
 
-        jwtProvider.updateRefreshToken(user.getEmail(), refreshToken);
+        jwtProvider.updateRefreshToken(authUser.getEmail(), refreshToken);
         return new TokenResponseDto(accessToken, refreshToken);
     }
 
