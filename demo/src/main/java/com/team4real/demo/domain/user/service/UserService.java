@@ -58,4 +58,9 @@ public class UserService {
         return userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_AUTHENTICATED));
     }
+
+    @Transactional(readOnly = true)
+    public User getUserInfo(Long userId) {
+        return getUserById(userId);
+    }
 }

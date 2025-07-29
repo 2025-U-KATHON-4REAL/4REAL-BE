@@ -91,6 +91,7 @@ public class AuthService {
         return redisService.get(redisKey, String.class);
     }
 
+    // Redis에서 refreshToken 삭제
     public void deleteRefreshToken(String username) {
         String redisKey = "refresh_token:" + username;
         redisService.delete(redisKey);
