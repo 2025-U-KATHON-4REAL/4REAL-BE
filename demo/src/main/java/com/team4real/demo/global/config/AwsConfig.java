@@ -12,13 +12,13 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 @Configuration
 public class AwsConfig {
 
-    @Value("${aws.credentials.access-key}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
 
-    @Value("${aws.credentials.secret-key}")
+    @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
 
-    @Value("${aws.region.static:ap-northeast-2}")
+    @Value("${cloud.aws.region.static}")
     private String region;
 
     @Bean
