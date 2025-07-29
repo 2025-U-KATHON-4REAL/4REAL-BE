@@ -60,6 +60,8 @@ public class SecurityConfig {
                 "http://localhost:3001",
                 "http://localhost:5173",
                 "http://localhost:5174",
+                "http://team4real.r-e.kr",
+                "https://team4real.r-e.kr",
                 "https://realmuse.vercel.app"
                 ));
 
