@@ -32,11 +32,12 @@ public class AuthService {
 
     public TokenResponseDto signUp(AuthSignUpRequestDto requestDto) {
         validateEmailAvailability(requestDto.email());
+        String normalizedPhoneNumber = requestDto.phoneNumber().replaceAll("-", "");
         User newUser = userService.createUser(
                 requestDto.email(),
                 encodePassword(requestDto.password()),
                 requestDto.nickname(),
-                requestDto.phoneNumber(),
+                normalizedPhoneNumber,
                 requestDto.userType()
         );
         return generateTokenResponse(newUser);
