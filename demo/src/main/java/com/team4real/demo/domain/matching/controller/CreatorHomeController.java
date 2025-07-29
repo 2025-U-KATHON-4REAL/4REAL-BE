@@ -1,6 +1,6 @@
 package com.team4real.demo.domain.matching.controller;
 
-import com.team4real.demo.domain.matching.dto.MatchingBrandsListResponseDto;
+import com.team4real.demo.domain.matching.dto.BrandUnitDto;
 import com.team4real.demo.domain.matching.entity.MatchingSortStrategy;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
 import com.team4real.demo.domain.matching.service.MatchingService;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "CreatorHomeController")
+@Tag(name = "Home-Creator")
 @RestController
 @PreAuthorize("hasRole('CREATOR')")
 @RequestMapping("/creators/matchings")
@@ -25,23 +25,23 @@ public class CreatorHomeController {
 
     @Operation(summary = "크리에이터 시점의 브랜드 추천 리스트 (무한 스크롤)")
     @GetMapping("/recommendations")
-    public ResponseEntity<PageResult<MatchingBrandsListResponseDto>> getRecommendedMatchingList(
+    public ResponseEntity<PageResult<BrandUnitDto>> getRecommendedMatchingList(
             @RequestParam(defaultValue = "BEST_MATCH") MatchingSortStrategy sort,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Long lastMatchingId
     ) {
-        PageResult<MatchingBrandsListResponseDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.RECOMMENDED, sort, size, lastMatchingId);
+        PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.RECOMMENDED, sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "크리에이터 시점의 브랜드 요청 리스트 (무한 스크롤)")
     @GetMapping("/requests")
-    public ResponseEntity<PageResult<MatchingBrandsListResponseDto>> getRequestedMatchingList(
+    public ResponseEntity<PageResult<BrandUnitDto>> getRequestedMatchingList(
             @RequestParam(defaultValue = "BEST_MATCH") MatchingSortStrategy sort,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Long lastMatchingId
     ) {
-        PageResult<MatchingBrandsListResponseDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.PENDING, sort, size, lastMatchingId);
+        PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.PENDING, sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
     }
 }

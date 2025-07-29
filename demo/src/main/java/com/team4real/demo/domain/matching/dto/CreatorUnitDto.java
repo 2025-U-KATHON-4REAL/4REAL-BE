@@ -1,29 +1,27 @@
 package com.team4real.demo.domain.matching.dto;
 
-import com.team4real.demo.domain.brand.entity.Brand;
+import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.matching.entity.Matching;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
 import lombok.Builder;
 
 @Builder
-public record MatchingBrandsListResponseDto(
+public record CreatorUnitDto(
         Long matchingId,
-        Long brandId,
+        Long creatorId,
         String name,
         String image,
         int matchScore,
-        String keywords,
         MatchingStatus status,
         boolean liked
 ) {
-    public static MatchingBrandsListResponseDto from(Matching m, Brand brand, boolean liked) {
-        return MatchingBrandsListResponseDto.builder()
+    public static CreatorUnitDto from(Matching m, Creator creator, boolean liked) {
+        return CreatorUnitDto.builder()
                 .matchingId(m.getMatchingId())
-                .brandId(brand.getBrandId())
-                .name(brand.getName())
-                .image(brand.getImage())
+                .creatorId(creator.getCreatorId())
+                .name(creator.getName())
+                .image(creator.getImage())
                 .matchScore(m.getMatchScore())
-                .keywords(brand.getKeyword())
                 .status(m.getStatus())
                 .liked(liked)
                 .build();

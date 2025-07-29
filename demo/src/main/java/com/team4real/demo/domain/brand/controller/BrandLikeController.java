@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Brands")
+@Tag(name = "BrandLike")
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor

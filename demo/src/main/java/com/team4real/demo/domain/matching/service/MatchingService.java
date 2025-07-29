@@ -4,8 +4,8 @@ import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.brand.entity.Brand;
 import com.team4real.demo.domain.brand.repository.BrandLikeRepository;
 import com.team4real.demo.domain.creator.entity.Creator;
-import com.team4real.demo.domain.matching.dto.MatchingBrandsListResponseDto;
-import com.team4real.demo.domain.matching.dto.MatchingCreatorsListResponseDto;
+import com.team4real.demo.domain.matching.dto.BrandUnitDto;
+import com.team4real.demo.domain.matching.dto.CreatorUnitDto;
 import com.team4real.demo.domain.matching.entity.Matching;
 import com.team4real.demo.domain.matching.entity.MatchingSortStrategy;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
@@ -30,7 +30,7 @@ public class MatchingService {
 
     // 크리에이터 회원을 위한
     @Transactional(readOnly = true)
-    public PageResult<MatchingBrandsListResponseDto> getMatchingForCreatorUserWithCursor(
+    public PageResult<BrandUnitDto> getMatchingForCreatorUserWithCursor(
             MatchingStatus status, MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
@@ -38,7 +38,7 @@ public class MatchingService {
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
-                    return MatchingBrandsListResponseDto.from(m, brand, liked);
+                    return BrandUnitDto.from(m, brand, liked);
                 },
                 size
         );
@@ -46,14 +46,14 @@ public class MatchingService {
 
     // 기업 회원을 위한
     @Transactional(readOnly = true)
-    public PageResult<MatchingCreatorsListResponseDto> getMatchingForBrandUserWithCursor(
+    public PageResult<CreatorUnitDto> getMatchingForBrandUserWithCursor(
             MatchingStatus status, MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Brand brand = authUserService.getCurrentBrandUser();
         return getCursorMatchings(
                 () -> matchingRepository.findByBrandAndStatusWithCursor(brand, status, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
                 m -> {
                     Creator creator = m.getCreator();
-                    return MatchingCreatorsListResponseDto.from(m, creator, false);
+                    return CreatorUnitDto.from(m, creator, false);
                 },
                 size
         );
