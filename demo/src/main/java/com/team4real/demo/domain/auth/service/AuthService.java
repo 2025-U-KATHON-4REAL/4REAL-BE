@@ -40,9 +40,9 @@ public class AuthService {
                 normalizedPhoneNumber
         );
         if (requestDto.role() == Role.CREATOR) {
-            authUserService.createCreator(newAuthUser, requestDto.nickname());
+            authUserService.createCreator(newAuthUser, requestDto.name());
         } else if (requestDto.role() == Role.BRAND) {
-            authUserService.createBrand(newAuthUser, requestDto.nickname());
+            authUserService.createBrand(newAuthUser, requestDto.name());
         }
         return generateTokenResponse(newAuthUser);
     }
