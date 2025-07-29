@@ -7,6 +7,7 @@ import com.team4real.demo.domain.brand.repository.BrandLikeRepository;
 import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.matching.dto.BrandUnitDto;
 import com.team4real.demo.domain.matching.dto.CreatorUnitDto;
+import com.team4real.demo.domain.matching.dto.MatchingDataDto;
 import com.team4real.demo.domain.matching.entity.Matching;
 import com.team4real.demo.domain.matching.entity.MatchingSortStrategy;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
@@ -76,30 +77,45 @@ public class MatchingService {
     }
 
     @Transactional
-    public void acceptMatching(Long matchingId) {
+    public void pendMatching(Long matchingId, MatchingDataDto matchingDataDto) {
+        AuthUser authUser = authUserService.getCurrentAuthUser();
         Matching matching = matchingRepository.findById(matchingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        validateMatchingOwnership(matching); // 본인 확인 로직
-        matching.accept();
+        validateReceiver(authUser, matching);
+        matching.pend(matchingDataDto.content());
     }
 
     @Transactional
-    public void rejectMatching(Long matchingId) {
+    public void acceptMatching(Long matchingId, MatchingDataDto matchingDataDto) {
+        AuthUser authUser = authUserService.getCurrentAuthUser();
         Matching matching = matchingRepository.findById(matchingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        validateMatchingOwnership(matching);
-        matching.reject();
+        validateReceiver(authUser, matching);
+        matching.accept(matchingDataDto.content());
     }
 
-    public void validateMatchingOwnership(Matching matching) {
-        AuthUser user = authUserService.getCurrentAuthUser();
-        boolean isOwner = false;
-        if (user.isCreator()) {
-            isOwner = matching.getCreator().getAuthUser().equals(user);
-        } else if (user.isBrand()) {
-            isOwner = matching.getBrand().getAuthUser().equals(user);
+    @Transactional
+    public void rejectMatching(Long matchingId, MatchingDataDto matchingDataDto) {
+        AuthUser authUser = authUserService.getCurrentAuthUser();
+        Matching matching = matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        validateReceiver(authUser, matching);
+        matching.reject(matchingDataDto.content());
+    }
+
+    private void validateReceiver(AuthUser authUser, Matching matching) {
+        // 요청자는 권한 없음
+        if (matching.getInitiator().equals(authUser.getRole())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_REQUEST);
         }
-        if (!isOwner) {
+        // 수신자가 본인인지 확인
+        boolean isReceiver = false;
+        if (authUser.isCreator() && matching.getCreator().getAuthUser().equals(authUser)) {
+            isReceiver = true;
+        } else if (authUser.isBrand() && matching.getBrand().getAuthUser().equals(authUser)) {
+            isReceiver = true;
+        }
+        if (!isReceiver) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_REQUEST);
         }
     }
