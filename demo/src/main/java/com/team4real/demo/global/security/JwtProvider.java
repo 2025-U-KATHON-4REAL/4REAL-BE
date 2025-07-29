@@ -1,6 +1,9 @@
 package com.team4real.demo.global.security;
 
+import com.team4real.demo.domain.user.entity.Role;
+import com.team4real.demo.domain.user.repository.UserRepository;
 import com.team4real.demo.global.exception.CustomException;
+import com.team4real.demo.global.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -36,7 +39,6 @@ public class JwtProvider {
         return generateToken(username, accessKey, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    // Redis를 사용하지 않음
     public String generateRefreshToken(String username) {
         String refreshToken = generateToken(username, refreshKey, REFRESH_TOKEN_EXPIRE_TIME);
         userRepository.findByEmail(username).ifPresent(user -> {
@@ -48,10 +50,7 @@ public class JwtProvider {
 
     private String generateToken(String username, Key key, Duration expiredTime) {
         Claims claims = Jwts.claims().setSubject(username);
-        String role = userRepository.findByEmail(username)
-                .map(user -> user.getRole().name())
-                .orElse("ROLE_USER");
-        claims.put("role", role);
+        claims.put("role", Role.ROLE_USER.name());
 
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + expiredTime.toMillis());

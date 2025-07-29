@@ -1,14 +1,15 @@
 package com.team4real.demo.global.security;
 
+import com.team4real.demo.domain.user.entity.Role;
+import com.team4real.demo.domain.user.entity.User;
+import com.team4real.demo.domain.user.repository.UserRepository;
+import com.team4real.demo.global.exception.CustomException;
+import com.team4real.demo.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import tamtam.mooney.domain.user.entity.User;
-import tamtam.mooney.domain.user.repository.UserRepository;
-import tamtam.mooney.global.exception.CustomException;
-import tamtam.mooney.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getEncryptedPassword())
-                .roles("USER") // 필요시 Role 추가 가능
+                .roles(Role.ROLE_USER.name())
                 .build();
     }
 }
