@@ -26,9 +26,9 @@ public class CreatorHomeController {
     @Operation(summary = "크리에이터 시점의 브랜드 추천 리스트 (무한 스크롤)")
     @GetMapping("/recommendations")
     public ResponseEntity<PageResult<BrandUnitDto>> getRecommendedMatchingList(
-            @RequestParam(defaultValue = "BEST_MATCH") MatchingSortStrategy sort,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Long lastMatchingId
+            @RequestParam(defaultValue = "BEST_MATCH") final MatchingSortStrategy sort,
+            @RequestParam(defaultValue = "10") final int size,
+            @RequestParam(required = false) final Long lastMatchingId
     ) {
         PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.RECOMMENDED, sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
@@ -37,9 +37,9 @@ public class CreatorHomeController {
     @Operation(summary = "크리에이터 시점의 브랜드 요청 리스트 (무한 스크롤)")
     @GetMapping("/requests")
     public ResponseEntity<PageResult<BrandUnitDto>> getRequestedMatchingList(
-            @RequestParam(defaultValue = "BEST_MATCH") MatchingSortStrategy sort,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Long lastMatchingId
+            @RequestParam(defaultValue = "BEST_MATCH") final MatchingSortStrategy sort,
+            @RequestParam(defaultValue = "10") final int size,
+            @RequestParam(required = false) final Long lastMatchingId
     ) {
         PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.PENDING, sort, size, lastMatchingId);
         return ResponseEntity.ok(result);

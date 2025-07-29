@@ -21,7 +21,7 @@ public class AuthController {
 
     @Operation(summary = "이메일 중복 확인")
     @GetMapping("/check-email")
-    public ResponseEntity<String> checkEmailAvailability(@RequestParam @NotNull String email) {
+    public ResponseEntity<String> checkEmailAvailability(@RequestParam final String email) {
         authService.validateEmailAvailability(email);
         return ResponseEntity.ok().build();
     }
@@ -40,7 +40,7 @@ public class AuthController {
 
     @Operation(summary = "액세스 토큰과 리프레시 토큰 재발급")
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponseDto> refreshAccessToken(@RequestParam @NotNull String refreshToken) {
+    public ResponseEntity<TokenResponseDto> refreshAccessToken(@RequestParam final String refreshToken) {
         return ResponseEntity.ok(authService.refreshAccessToken(refreshToken));
     }
 
