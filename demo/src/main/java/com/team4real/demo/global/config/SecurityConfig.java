@@ -85,19 +85,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configure(http))
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, cookieUtil), LogoutFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error", "/favicon.ico",
-                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/auth/**", "/public/**").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().permitAll())
-
                 .logout(logout -> logout
                         .logoutUrl("/logout") // POST 요청
                         .deleteCookies("refreshToken")
