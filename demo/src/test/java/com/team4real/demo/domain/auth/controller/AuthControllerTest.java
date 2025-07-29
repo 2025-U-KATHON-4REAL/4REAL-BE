@@ -7,6 +7,7 @@ import com.team4real.demo.domain.auth.service.AuthService;
 import com.team4real.demo.domain.user.entity.UserType;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
+import com.team4real.demo.global.redis.RedisService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthController 테스트")
 class AuthControllerTest {
+    @Mock
+    private RedisService redisService;
 
     @Mock
     private AuthService authService;

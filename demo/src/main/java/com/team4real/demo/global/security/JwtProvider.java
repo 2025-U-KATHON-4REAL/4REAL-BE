@@ -81,6 +81,10 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    public Claims getAccessTokenClaims(String accessToken) {
+        return parseClaims(accessToken, accessKey);
+    }
+
     private Claims parseClaims(String token, Key key) {
         try {
             return Jwts.parserBuilder()
