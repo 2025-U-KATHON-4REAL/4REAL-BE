@@ -4,6 +4,7 @@ import com.team4real.demo.domain.matching.dto.MatchingBrandsListResponseDto;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
 import com.team4real.demo.domain.matching.service.MatchingService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Matching")
 @RestController
 @RequiredArgsConstructor
 public class MatchingController {
 
     private final MatchingService matchingService;
 
-    @Operation(summary = "크리에이터 - 대기 중인 매칭 확인")
+    @Operation(summary = "크리에이터 - 상태별 매칭 확인")
     @PreAuthorize("hasRole('CREATOR')")
     @GetMapping("/brands/matchings")
     public ResponseEntity<Page<MatchingBrandsListResponseDto>> getMatchingsForCreator(
@@ -30,7 +32,7 @@ public class MatchingController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "브랜드 - 대기 중인 매칭 확인")
+    @Operation(summary = "브랜드 - 상태별 매칭 확인")
     @PreAuthorize("hasRole('BRAND')")
     @GetMapping("/creators/matchings")
     public ResponseEntity<Page<MatchingBrandsListResponseDto>> getMatchingsForBrand(
