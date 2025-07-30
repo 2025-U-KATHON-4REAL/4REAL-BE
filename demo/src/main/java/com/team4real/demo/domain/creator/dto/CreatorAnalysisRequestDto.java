@@ -5,7 +5,7 @@ import java.util.List;
 public record CreatorAnalysisRequestDto(
     String name,
     String gender,
-    int age,
+    int birth,
     String profileImageUrl,
 
     List<String> interestCategories,
