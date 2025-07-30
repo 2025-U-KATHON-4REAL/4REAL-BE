@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChatMessage extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatMessageId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")

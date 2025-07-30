@@ -47,8 +47,8 @@ public class BrandHomeController {
 
     @Operation(summary = "브랜드가 매칭을 제안")
     @PatchMapping("/{matchingId}/pend")
-    public ResponseEntity<Void> requestMatching(@PathVariable final Long matchingId, @RequestBody @Valid MatchingDataDto matchingDataDto) {
-        matchingService.requestMatching(matchingId, matchingDataDto);
+    public ResponseEntity<Void> pendMatching(@PathVariable final Long matchingId, @RequestBody @Valid MatchingDataDto matchingDataDto) {
+        matchingService.pendMatching(matchingId, matchingDataDto);
         return ResponseEntity.ok().build();
     }
 

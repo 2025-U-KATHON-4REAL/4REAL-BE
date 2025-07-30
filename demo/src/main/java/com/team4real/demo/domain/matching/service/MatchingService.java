@@ -96,13 +96,12 @@ public class MatchingService {
     }
 
     @Transactional
-    public void requestMatching(Long matchingId, MatchingDataDto matchingDataDto) {
+    public void pendMatching(Long matchingId, MatchingDataDto matchingDataDto) {
         AuthUser authUser = authUserService.getCurrentAuthUser();
         Matching matching = matchingRepository.findById(matchingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         validateReceiver(authUser, matching);
         matching.pend(matchingDataDto.content());
-        matching.setInitiator(authUser.getRole()); // Initiator 설정
         chatRoomRepository.findByMatching_MatchingId(matchingId)
                 .orElseGet(() -> chatRoomRepository.save(new ChatRoom(matching)));
     }
