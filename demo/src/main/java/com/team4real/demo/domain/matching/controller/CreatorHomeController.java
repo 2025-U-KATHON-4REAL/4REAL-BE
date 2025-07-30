@@ -48,8 +48,8 @@ public class CreatorHomeController {
 
     @Operation(summary = "크리에이터가 매칭을 제안")
     @PatchMapping("/{matchingId}/pend")
-    public ResponseEntity<Void> pendMatching(@PathVariable final Long matchingId, @RequestBody @Valid MatchingDataDto matchingDataDto) {
-        matchingService.pendMatching(matchingId, matchingDataDto);
+    public ResponseEntity<Void> requestMatching(@PathVariable final Long matchingId, @RequestBody @Valid MatchingDataDto matchingDataDto) {
+        matchingService.requestMatching(matchingId, matchingDataDto);
         return ResponseEntity.ok().build();
     }
 

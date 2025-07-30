@@ -17,7 +17,7 @@ public class ChatRoom extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long chatRoomId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matching_id", nullable = false, unique = true)

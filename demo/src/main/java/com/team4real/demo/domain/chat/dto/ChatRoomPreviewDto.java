@@ -17,7 +17,7 @@ public record ChatRoomPreviewDto(
     public static ChatRoomPreviewDto from(ChatRoom chatRoom) {
         Matching matching = chatRoom.getMatching();
         return new ChatRoomPreviewDto(
-                chatRoom.getId(),
+                chatRoom.getChatRoomId(),
                 matching.getBrand().getName(),
                 matching.getBrand().getImage(),
                 chatRoom.getLastMessage(),
