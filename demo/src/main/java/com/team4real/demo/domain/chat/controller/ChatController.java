@@ -41,8 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("/{chatRoomId}/message")
-    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(
-            @PathVariable Long chatRoomId) {
+    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(@PathVariable final Long chatRoomId) {
         return ResponseEntity.ok(chatService.getAllMessages(chatRoomId));
     }
 }
