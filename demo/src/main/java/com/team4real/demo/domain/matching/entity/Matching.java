@@ -29,7 +29,6 @@ public class Matching extends BaseTimeEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role initiator;

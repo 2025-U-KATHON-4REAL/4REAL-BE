@@ -13,7 +13,7 @@ import lombok.*;
 public class BrandLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long brandLikeId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_user_id", nullable = false)
