@@ -35,10 +35,11 @@ public class AuthUserService {
         return authUserRepository.save(authUser);
     }
 
-    public void createCreator(AuthUser authUser, String name) {
+    public void createCreator(AuthUser authUser, String realName) {
         Creator creator = Creator.builder()
                 .authUser(authUser)
-                .name(name)
+                .realName(realName)
+                .nickname(realName) // 초기값은 realName과 동일하게
                 .build();
         creatorRepository.save(creator);
     }
@@ -105,7 +106,7 @@ public class AuthUserService {
         AuthUser authUser = getCurrentAuthUser();
         ProfileInfo profileInfo = switch (authUser.getRole()) {
             case CREATOR -> creatorRepository.findByAuthUser(authUser)
-                    .map(c -> new ProfileInfo(c.getName(), c.getImage()))
+                    .map(c -> new ProfileInfo(c.getNickname(), c.getImage()))
                     .orElseThrow(() -> new IllegalStateException("Creator가 아닙니다."));
             case BRAND -> brandRepository.findByAuthUser(authUser)
                     .map(b -> new ProfileInfo(b.getName(), b.getImage()))

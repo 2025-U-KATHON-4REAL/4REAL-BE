@@ -19,7 +19,7 @@ public record CreatorUnitDto(
         return CreatorUnitDto.builder()
                 .matchingId(m.getMatchingId())
                 .creatorId(creator.getCreatorId())
-                .name(creator.getName())
+                .name(creator.getNickname())
                 .image(creator.getImage())
                 .matchScore(m.getMatchScore())
                 .status(m.getStatus())

@@ -20,7 +20,7 @@ public class Creator extends BaseTimeEntity {
     private AuthUser authUser;
 
     @Column(nullable = false)
-    private String name;
+    private String nickname;
 
     private String image;
     private String realName;
@@ -28,12 +28,16 @@ public class Creator extends BaseTimeEntity {
     private String gender;
 
     @Builder
-    public Creator(AuthUser authUser, String name, String image, String realName, String birth, String gender) {
+    public Creator(AuthUser authUser, String nickname, String image, String realName, String birth, String gender) {
         this.authUser = authUser;
-        this.name = name;
+        this.nickname = nickname;
         this.image = image;
         this.realName = realName;
         this.birth = birth;
         this.gender = gender;
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 }

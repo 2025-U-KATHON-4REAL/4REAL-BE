@@ -1,8 +1,0 @@
-package com.team4real.demo.domain.creator.dto;
-
-public record CreatorResponseDto(
-        Long creatorId,
-        String name,
-        String email
-) {
-} 
