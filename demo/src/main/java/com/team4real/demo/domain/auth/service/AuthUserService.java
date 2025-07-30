@@ -35,13 +35,13 @@ public class AuthUserService {
         return authUserRepository.save(authUser);
     }
 
-    public void createCreator(AuthUser authUser, String realName) {
+    public Creator createCreator(AuthUser authUser, String realName) {
         Creator creator = Creator.builder()
                 .authUser(authUser)
                 .realName(realName)
                 .nickname(realName) // 초기값은 realName과 동일하게
                 .build();
-        creatorRepository.save(creator);
+        return creatorRepository.save(creator);
     }
 
     public void createBrand(AuthUser authUser, String name) {

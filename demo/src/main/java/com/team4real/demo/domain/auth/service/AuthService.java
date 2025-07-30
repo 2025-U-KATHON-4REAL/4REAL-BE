@@ -5,6 +5,12 @@ import com.team4real.demo.domain.auth.dto.AuthSignUpRequestDto;
 import com.team4real.demo.domain.auth.dto.TokenResponseDto;
 import com.team4real.demo.domain.auth.entity.AuthUser;
 import com.team4real.demo.domain.auth.entity.Role;
+import com.team4real.demo.domain.brand.entity.Brand;
+import com.team4real.demo.domain.brand.repository.BrandRepository;
+import com.team4real.demo.domain.creator.entity.Creator;
+import com.team4real.demo.domain.matching.entity.Matching;
+import com.team4real.demo.domain.matching.entity.MatchingStatus;
+import com.team4real.demo.domain.matching.repository.MatchingRepository;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
 import com.team4real.demo.global.security.JwtProvider;
@@ -14,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +29,8 @@ public class AuthService {
     private final AuthUserService authUserService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final BrandRepository brandRepository;
+    private final MatchingRepository matchingRepository;
 
     @Transactional(readOnly = true)
     public void validateEmailAvailability(String email) {
@@ -39,9 +49,27 @@ public class AuthService {
                 requestDto.role(),
                 normalizedPhoneNumber
         );
+
         if (newAuthUser.isCreator()) {
-            authUserService.createCreator(newAuthUser, requestDto.name());
-        } else if (newAuthUser.isBrand()) {
+            Creator creator = authUserService.createCreator(newAuthUser, requestDto.name());
+
+            // (1) 모든 Brand 조회
+            List<Brand> allBrands = brandRepository.findAll();
+
+            // (2) Matching 엔티티 일괄 생성
+            List<Matching> matchings = allBrands.stream()
+                    .map(brand -> Matching.builder()
+                            .creator(creator)
+                            .brand(brand)
+                            .status(MatchingStatus.RECOMMENDED)
+                            .initiator(Role.BRAND)
+                            .matchScore(0)  // 기본값, 필요시 변경
+                            .build())
+                    .toList();
+
+            // (3) 일괄 저장
+            matchingRepository.saveAll(matchings);
+        }  else if (newAuthUser.isBrand()) {
             authUserService.createBrand(newAuthUser, requestDto.name());
         }
         return generateTokenResponse(newAuthUser);
