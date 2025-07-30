@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -53,6 +54,7 @@ public class AuthService {
         if (newAuthUser.isCreator()) {
             Creator creator = authUserService.createCreator(newAuthUser, requestDto.name());
 
+            Random random = new Random();
             // (1) 모든 Brand 조회
             List<Brand> allBrands = brandRepository.findAll();
 
@@ -63,7 +65,7 @@ public class AuthService {
                             .brand(brand)
                             .status(MatchingStatus.RECOMMENDED)
                             .initiator(Role.BRAND)
-                            .matchScore(0)  // 기본값, 필요시 변경
+                            .matchScore(random.nextInt(40) + 60) // 60~99
                             .build())
                     .toList();
 
