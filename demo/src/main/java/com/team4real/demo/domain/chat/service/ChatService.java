@@ -4,6 +4,7 @@ import com.team4real.demo.domain.auth.entity.AuthUser;
 import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.domain.chat.dto.ChatMessageDto;
 import com.team4real.demo.domain.chat.dto.ChatMessageContentDto;
+import com.team4real.demo.domain.chat.dto.ChatMessageResponseDto;
 import com.team4real.demo.domain.chat.entity.ChatMessage;
 import com.team4real.demo.domain.chat.entity.ChatRoom;
 import com.team4real.demo.domain.chat.entity.MessageType;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -82,6 +84,12 @@ public class ChatService {
         }
         chatMessageRepository.save(message);
         chatRoom.updateLastMessage(message.getContent(), LocalDateTime.now());
+    }
+    public List<ChatMessageResponseDto> getAllMessages(Long chatRoomId) {
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId);
+        return messages.stream()
+                .map(ChatMessageResponseDto::from)
+                .toList();
     }
 }
 

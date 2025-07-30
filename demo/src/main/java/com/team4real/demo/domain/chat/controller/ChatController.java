@@ -1,6 +1,7 @@
 package com.team4real.demo.domain.chat.controller;
 
 import com.team4real.demo.domain.chat.dto.ChatMessageContentDto;
+import com.team4real.demo.domain.chat.dto.ChatMessageResponseDto;
 import com.team4real.demo.domain.chat.dto.ChatRoomPreviewDto;
 import com.team4real.demo.domain.chat.service.ChatRoomService;
 import com.team4real.demo.domain.chat.service.ChatService;
@@ -37,5 +38,11 @@ public class ChatController {
             @RequestParam(required = false) MatchingStatus status
     ) {
         return ResponseEntity.ok(chatRoomService.getMyChatRooms(status, false));
+    }
+
+    @GetMapping("/{chatRoomId}/message")
+    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(
+            @PathVariable Long chatRoomId) {
+        return ResponseEntity.ok(chatService.getAllMessages(chatRoomId));
     }
 }
