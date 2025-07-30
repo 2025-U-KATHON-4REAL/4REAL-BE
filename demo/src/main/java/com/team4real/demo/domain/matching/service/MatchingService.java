@@ -42,7 +42,7 @@ public class MatchingService {
             MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
-                () -> matchingRepository.findWithBrandByCursor(creator, MatchingStatus.RECOMMENDED, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findByCreatorAndStatusWithCursor(creator, MatchingStatus.RECOMMENDED, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
@@ -58,7 +58,7 @@ public class MatchingService {
             MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
-                () -> matchingRepository.findWithBrandByCursor(creator, MatchingStatus.PENDING, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findByCreatorAndStatusWithCursor(creator, MatchingStatus.PENDING, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);

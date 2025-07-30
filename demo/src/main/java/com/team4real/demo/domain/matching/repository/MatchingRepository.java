@@ -12,8 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
-    @Query("SELECT m FROM Matching m JOIN FETCH m.brand WHERE m.creator = :creator AND m.status = :status AND m.matchingId < :lastId ORDER BY m.matchingId DESC")
-    List<Matching> findWithBrandByCursor(@Param("creator") Creator creator, @Param("status") MatchingStatus status, @Param("lastId") Long lastId, Pageable pageable);
     @Query("""
     SELECT m FROM Matching m
     JOIN FETCH m.creator
@@ -26,4 +24,18 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
             @Param("status") MatchingStatus status,
             @Param("lastMatchingId") Long lastMatchingId,
             Pageable pageable);
+
+    @Query("""
+    SELECT m FROM Matching m
+    JOIN FETCH m.brand
+    WHERE m.creator = :creator AND m.status = :status
+    AND (:lastMatchingId IS NULL OR m.matchingId < :lastMatchingId)
+    ORDER BY m.matchingId DESC
+    """)
+    List<Matching> findByCreatorAndStatusWithCursor(
+            @Param("creator") Creator creator,
+            @Param("status") MatchingStatus status,
+            @Param("lastMatchingId") Long lastMatchingId,
+            Pageable pageable
+    );
 }
