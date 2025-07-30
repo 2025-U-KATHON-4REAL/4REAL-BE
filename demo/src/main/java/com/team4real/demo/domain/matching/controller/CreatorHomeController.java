@@ -1,6 +1,7 @@
 package com.team4real.demo.domain.matching.controller;
 
 import com.team4real.demo.domain.matching.dto.BrandUnitDto;
+import com.team4real.demo.domain.matching.dto.BrandUnitRequestDto;
 import com.team4real.demo.domain.matching.dto.MatchingDataDto;
 import com.team4real.demo.domain.matching.entity.MatchingSortStrategy;
 import com.team4real.demo.domain.matching.entity.MatchingStatus;
@@ -30,18 +31,18 @@ public class CreatorHomeController {
             @RequestParam(defaultValue = "10") final int size,
             @RequestParam(required = false) final Long lastMatchingId
     ) {
-        PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.RECOMMENDED, sort, size, lastMatchingId);
+        PageResult<BrandUnitDto> result = matchingService.getRecommendedMatchingForCreatorUserWithCursor(sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "크리에이터 시점의 브랜드 요청 리스트 (무한 스크롤)")
     @GetMapping("/requests")
-    public ResponseEntity<PageResult<BrandUnitDto>> getRequestedMatchingList(
+    public ResponseEntity<PageResult<BrandUnitRequestDto>> getRequestedMatchingList(
             @RequestParam(defaultValue = "BEST_MATCH") final MatchingSortStrategy sort,
             @RequestParam(defaultValue = "10") final int size,
             @RequestParam(required = false) final Long lastMatchingId
     ) {
-        PageResult<BrandUnitDto> result = matchingService.getMatchingForCreatorUserWithCursor(MatchingStatus.PENDING, sort, size, lastMatchingId);
+        PageResult<BrandUnitRequestDto> result = matchingService.getPendingMatchingForCreatorUserWithCursor(sort, size, lastMatchingId);
         return ResponseEntity.ok(result);
     }
 

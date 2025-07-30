@@ -8,6 +8,7 @@ import com.team4real.demo.domain.chat.entity.ChatRoom;
 import com.team4real.demo.domain.chat.repository.ChatRoomRepository;
 import com.team4real.demo.domain.creator.entity.Creator;
 import com.team4real.demo.domain.matching.dto.BrandUnitDto;
+import com.team4real.demo.domain.matching.dto.BrandUnitRequestDto;
 import com.team4real.demo.domain.matching.dto.CreatorUnitDto;
 import com.team4real.demo.domain.matching.dto.MatchingDataDto;
 import com.team4real.demo.domain.matching.entity.Matching;
@@ -37,11 +38,11 @@ public class MatchingService {
 
     // 크리에이터 회원을 위한
     @Transactional(readOnly = true)
-    public PageResult<BrandUnitDto> getMatchingForCreatorUserWithCursor(
-            MatchingStatus status, MatchingSortStrategy sort, int size, Long lastMatchingId) {
+    public PageResult<BrandUnitDto> getRecommendedMatchingForCreatorUserWithCursor(
+            MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
-                () -> matchingRepository.findWithBrandByCursor(creator, status, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findWithBrandByCursor(creator, MatchingStatus.RECOMMENDED, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
@@ -51,6 +52,21 @@ public class MatchingService {
         );
     }
 
+    // 크리에이터 회원을 위한
+    @Transactional(readOnly = true)
+    public PageResult<BrandUnitRequestDto> getPendingMatchingForCreatorUserWithCursor(
+            MatchingSortStrategy sort, int size, Long lastMatchingId) {
+        Creator creator = authUserService.getCurrentCreatorUser();
+        return getCursorMatchings(
+                () -> matchingRepository.findWithBrandByCursor(creator, MatchingStatus.PENDING, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                m -> {
+                    Brand brand = m.getBrand();
+                    boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
+                    return BrandUnitRequestDto.from(m, brand, liked);
+                },
+                size
+        );
+    }
     // 기업 회원을 위한
     @Transactional(readOnly = true)
     public PageResult<CreatorUnitDto> getMatchingForBrandUserWithCursor(
