@@ -17,24 +17,24 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Service
 public class S3PresignedUrlService {
-    private final AwsConfig awsProperties;
+    private final AwsConfig awsConfig;
 
     public URL generatePresignedUrl(String key, String contentType, long expirationMinutes) {
         // S3Presigner 객체 생성 (Bean으로 등록하지 않고 매번 생성/close)
         S3Presigner presigner = S3Presigner.builder()
-                .region(Region.of(awsProperties.getRegion()))
+                .region(Region.of(awsConfig.getRegion()))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        awsProperties.getCredentials().getAccessKey(),
-                                        awsProperties.getCredentials().getSecretKey()
+                                        awsConfig.getCredentials().getAccessKey(),
+                                        awsConfig.getCredentials().getSecretKey()
                                 )
                         )
                 )
                 .build();
         // PutObjectRequest 세팅
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(awsProperties.getS3().getBucket())
+                .bucket(awsConfig.getS3().getBucket())
                 .key(key)
                 .contentType(contentType)
                 .build();
