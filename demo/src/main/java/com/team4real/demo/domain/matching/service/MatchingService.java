@@ -19,7 +19,6 @@ import com.team4real.demo.global.common.dto.PageResult;
 import com.team4real.demo.global.exception.CustomException;
 import com.team4real.demo.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +41,9 @@ public class MatchingService {
             MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
-                () -> matchingRepository.findByCreatorAndStatusWithCursor(creator, MatchingStatus.RECOMMENDED, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findCreatorMatchingsWithCursor(creator, MatchingStatus.RECOMMENDED, lastMatchingId,
+                        size,
+                        sort),
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
@@ -58,7 +59,9 @@ public class MatchingService {
             MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Creator creator = authUserService.getCurrentCreatorUser();
         return getCursorMatchings(
-                () -> matchingRepository.findByCreatorAndStatusWithCursor(creator, MatchingStatus.PENDING, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findCreatorMatchingsWithCursor(creator, MatchingStatus.PENDING, lastMatchingId,
+                        size,
+                        sort),
                 m -> {
                     Brand brand = m.getBrand();
                     boolean liked = brandLikeRepository.existsByAuthUserAndBrand(creator.getAuthUser(), brand);
@@ -73,7 +76,9 @@ public class MatchingService {
             MatchingStatus status, MatchingSortStrategy sort, int size, Long lastMatchingId) {
         Brand brand = authUserService.getCurrentBrandUser();
         return getCursorMatchings(
-                () -> matchingRepository.findByBrandAndStatusWithCursor(brand, status, lastMatchingId, PageRequest.of(0, size + 1, sort.toSort())),
+                () -> matchingRepository.findBrandMatchingsWithCursor(brand, status, lastMatchingId,
+                        size,
+                        sort),
                 m -> {
                     Creator creator = m.getCreator();
                     return CreatorUnitDto.from(m, creator, false);

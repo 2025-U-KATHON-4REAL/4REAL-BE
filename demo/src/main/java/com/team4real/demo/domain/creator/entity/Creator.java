@@ -27,6 +27,9 @@ public class Creator extends BaseTimeEntity {
     private String birth;
     private String gender;
 
+    @Column(nullable = false)
+    private int likeCount = 0;
+
     @Builder
     public Creator(AuthUser authUser, String nickname, String image, String realName, String birth, String gender) {
         this.authUser = authUser;
