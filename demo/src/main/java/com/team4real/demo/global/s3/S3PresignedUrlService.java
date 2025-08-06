@@ -1,6 +1,9 @@
 package com.team4real.demo.global.s3;
 
+import com.team4real.demo.domain.auth.service.AuthUserService;
 import com.team4real.demo.global.config.AwsConfig;
+import com.team4real.demo.global.exception.CustomException;
+import com.team4real.demo.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -12,15 +15,42 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+import java.util.UUID;
 
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class S3PresignedUrlService {
     private final AwsConfig awsConfig;
+    private final AuthUserService authUserService;
+    private static final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".webp");
+    private static final List<String> FORBIDDEN_CHAR = List.of("/", "\\", "..", "\"", ":", "*", "?", "<", ">", "|");
 
-    public URL generatePresignedUrl(String key, String contentType, long expirationMinutes) {
-        // S3Presigner 객체 생성 (Bean으로 등록하지 않고 매번 생성/close)
+    private boolean containsForbiddenChar(String fileName) {
+        return FORBIDDEN_CHAR.stream().anyMatch(fileName::contains);
+    }
+
+    private boolean isAllowedExtension(String fileName) {
+        String lower = fileName.toLowerCase();
+        return ALLOWED_EXTENSIONS.stream().anyMatch(lower::endsWith);
+    }
+
+    public URL generatePresignedUrl(String fileName, String contentType, long expirationMinutes) {
+        // fileName 유효성 검증
+        if (fileName == null || fileName.isBlank() || containsForbiddenChar(fileName)) {
+            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
+        }
+        if (!isAllowedExtension(fileName)) {
+            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
+        }
+        String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+        String uniqueFileName = UUID.randomUUID() + ext;
+        String key = String.format("profile/%d/%s",
+                authUserService.getCurrentAuthUser().getAuthUserId(),
+                uniqueFileName
+        );
+        // S3Presigner 객체 생성
         S3Presigner presigner = S3Presigner.builder()
                 .region(Region.of(awsConfig.getRegion()))
                 .credentialsProvider(
@@ -38,12 +68,11 @@ public class S3PresignedUrlService {
                 .key(key)
                 .contentType(contentType)
                 .build();
-        // Presigned URL 생성
         PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(builder -> builder
                 .putObjectRequest(putObjectRequest)
                 .signatureDuration(Duration.ofMinutes(expirationMinutes))
         );
-        presigner.close(); // 자원 해제
+        presigner.close();
         return presignedRequest.url();
     }
 }

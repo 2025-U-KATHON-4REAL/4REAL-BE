@@ -20,6 +20,8 @@ public enum ErrorCode {
     MISSING_PARAMETER(400, "필수 파라미터가 누락되었습니다."),
     // 로그인 시 잘못된 패스워드 입력
     PASSWORD_MISMATCH(400, "비밀번호가 올바르지 않습니다."),
+    // 지원하지 않는 파일 형식
+    INVALID_FILE_FORMAT(400, "유효하지 않은 파일 형식입니다."),
 
     // 401 Unauthorized
     // 로그인 상태여야 하는 요청
