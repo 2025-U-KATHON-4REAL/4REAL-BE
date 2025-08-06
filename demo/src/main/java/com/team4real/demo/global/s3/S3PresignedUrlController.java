@@ -1,6 +1,5 @@
 package com.team4real.demo.global.s3;
 
-import com.team4real.demo.domain.auth.service.AuthUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

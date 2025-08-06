@@ -18,32 +18,27 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 @RequiredArgsConstructor
 public class S3PresignedUrlService {
     private final AwsConfig awsConfig;
     private final AuthUserService authUserService;
-    private static final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".webp");
     private static final List<String> FORBIDDEN_CHAR = List.of("/", "\\", "..", "\"", ":", "*", "?", "<", ">", "|");
+    private static final List<String> ALLOWED_IMAGE_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".webp");
 
-    private boolean containsForbiddenChar(String fileName) {
-        return FORBIDDEN_CHAR.stream().anyMatch(fileName::contains);
-    }
-
-    private boolean isAllowedExtension(String fileName) {
+    // fileName 유효성 검증
+    private void validateImageFileName(String fileName) {
+        if (fileName == null || fileName.isBlank() || FORBIDDEN_CHAR.stream().anyMatch(fileName::contains)) {
+            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
+        }
         String lower = fileName.toLowerCase();
-        return ALLOWED_EXTENSIONS.stream().anyMatch(lower::endsWith);
+        if (ALLOWED_IMAGE_EXTENSIONS.stream().noneMatch(lower::endsWith)) {
+            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
+        }
     }
 
     public URL generatePresignedUrl(String fileName, String contentType, long expirationMinutes) {
-        // fileName 유효성 검증
-        if (fileName == null || fileName.isBlank() || containsForbiddenChar(fileName)) {
-            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
-        }
-        if (!isAllowedExtension(fileName)) {
-            throw new CustomException(ErrorCode.INVALID_FILE_FORMAT);
-        }
+        validateImageFileName(fileName);
         String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
         String uniqueFileName = UUID.randomUUID() + ext;
         String key = String.format("profile/%d/%s",
